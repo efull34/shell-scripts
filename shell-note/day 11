@@ -1,0 +1,45 @@
+4.2
+for循环 以及自动备份代码拆解
+for循环语法：
+for name in {1...10}
+do 
+    touch "fail_$name.txt"
+done
+name 在1-10数字中遍历循环 具体路径为：
+$name=1 → touch fail_1.txt → done → $name=2 → touch......
+in 后的变量值范围不仅局限于数字 还有不规律的字符编码 特定的目标文件等非正常变量值
+
+打包nginx配置文件脚本及逐行代码注释：
+#!/bin/bash
+contents="/etc/nginx"
+设定变量contents的值等于配置文件下的nginx文件，即要备份的目录源地址
+dates="/home/user/read_dates"
+设定变量dates的值等于需要备份到的目标地址
+time=($date +%y%m%d)
+设定变量time的值等于系统默认时间date以年月日的形式实事表现
+date_name="$dates/backup_$time.tar.gz"
+设定变量date_name的值为备份后的文件名格式
+if [ ! -d $contents ]
+then
+     echo "目录不存在，请确认nginx是否安装"
+     exit 1
+fi
+判断源文件地址是否存在 若不存在则强制退出整个脚本
+if [ ! -d $dates ]
+then
+     echo "正在创建目录..."
+     mkdir -p "$dates"
+fi
+判断目的地地址是否存在 若不存在则创建该目录 变量用""强调
+echo "开始备份文件..."
+tar -czvf "$date_name" "$contents"
+-c 创建新的文档目录 -z 创建.tar.gz文件 -v 参与处理文件列表可视化 -f 指定输出的文件名
+所以-f后第一个文件必须为目的地文件 最后一个文件为目标源文件
+if [ $? -ef 0 ]
+then
+     echo "备份成功"
+else 
+    echo "备份失败"
+    exit 1
+fi
+$?打印最后tar命令输出的值 -ef为数值对比参数，代表变量等于，等于 若输出值等于0则两者相等则脚本运行成功 不相等则强制退出脚本
