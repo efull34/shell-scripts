@@ -1,0 +1,23 @@
+4.4
+自动安装nginx脚本及逐行代码注释
+
+#!/bin/bash
+gold="/etc/nginx"
+if [ ! -d "$gold" ]
+变量必须要用""强调
+then
+     echo "正在调取下载，请输入密码："
+     sudo apt install nginx -y
+如果下一个代码是立刻判断安装是否成功，那么安装命令就必须放在echo之后，因为$?会默认只打印上一个代码的运行情况，如果将echo放在安装命令之后，那么$?打印的就是echo的运行退出码，条件则会判断为真。
+因此命令代码一般都放在echo之后
+    if [ $? -eq 0 ]
+    then
+        echo "安装成功"
+    else
+        echo "安装失败"
+    fi
+if条件可以相互嵌套，每层if都在上一层if的基础上往后缩进4格，但最多只允许嵌套3层。有几个if就必须写几个fi。fi的缩进逻辑同理
+else
+    echo "nginx已经存在，无需重复安装。"
+    exit 1
+fi
